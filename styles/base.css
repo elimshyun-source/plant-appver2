@@ -1,0 +1,218 @@
+/* 모든 화면 공통 규칙. 값은 tokens.css(= design-system.md)에서만 가져온다. */
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body { margin: 0; padding: 0; }
+
+body {
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  font-family: var(--font);
+  font-size: var(--t-body-size);
+  line-height: var(--t-body-lh);
+  letter-spacing: var(--t-body-ls);
+  word-break: keep-all;
+  overflow-wrap: break-word;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button, input { font: inherit; color: inherit; letter-spacing: inherit; }
+a { color: inherit; text-decoration: none; }
+button { cursor: pointer; }
+p { margin: 0; }
+
+/* 키보드 포커스: {component.button-primary-focus} 2px {colors.primary-focus} */
+:focus-visible { outline: 2px solid var(--color-primary-focus); outline-offset: 2px; }
+
+.app {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  min-height: 100dvh;
+  padding: 0 var(--side);
+  position: relative;
+}
+
+/* ---------- 글자 ---------- */
+.t-title   { font-size: var(--t-title-size); line-height: var(--t-title-lh); font-weight: var(--t-title-w); letter-spacing: var(--t-title-ls); margin: 0; }
+.t-section { font-size: var(--t-tagline-size); line-height: var(--t-tagline-lh); font-weight: var(--t-tagline-w); letter-spacing: var(--t-tagline-ls); margin: 0; }
+.t-body, .t-choice { font-size: var(--t-body-size); line-height: var(--t-body-lh); font-weight: var(--t-body-w); letter-spacing: var(--t-body-ls); }
+.t-name    { font-size: var(--t-body-size); line-height: var(--t-body-lh); font-weight: var(--t-strong-w); }
+.t-kind, .t-desc { font-size: var(--t-caption-size); line-height: var(--t-caption-lh); font-weight: var(--t-caption-w); letter-spacing: var(--t-caption-ls); color: var(--color-muted); margin: 0; }
+.accent    { color: var(--color-primary); font-style: normal; font-weight: inherit; }
+
+/* ---------- 화면 제목 ---------- */
+.screen-head { padding-top: var(--space-xxl); padding-bottom: var(--space-lg); }
+.screen-head .t-desc { margin-top: var(--space-xs); }
+.title-row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-xs); }
+.icon-button {
+  width: var(--touch); height: var(--touch); flex: none;
+  margin-right: calc((var(--touch) - 24px) / -2);
+  display: grid; place-items: center;
+  color: var(--color-ink);
+}
+
+/* ---------- 선택지: {component.configurator-option-chip} ---------- */
+.choices { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-sm); }
+.choice {
+  position: relative;
+  width: 100%; min-height: var(--touch);
+  padding: var(--space-sm) calc(var(--space-md) + 20px + var(--space-xs));
+  border-radius: var(--radius-pill);
+  background: var(--color-canvas);
+  border: 1px solid var(--color-hairline);
+  display: flex; align-items: center; justify-content: center;
+  text-align: center;
+  transition: transform .1s ease;
+}
+.choice:active { transform: scale(0.95); }
+/* 고르면 {component.configurator-option-chip-selected}: 2px {colors.primary-focus} 테두리 (크기는 그대로) */
+.choice[aria-checked="true"] { border-color: var(--color-primary-focus); box-shadow: inset 0 0 0 calc(var(--line-strong) - 1px) var(--color-primary-focus); }
+.choice .check { position: absolute; right: var(--space-md); top: 50%; margin-top: -10px; display: none; }
+.choice[aria-checked="true"] .check { display: block; }
+.choice span { display: block; }
+.choice b { font-weight: var(--t-strong-w); }
+
+/* ---------- 입력 칸: {component.search-input} ---------- */
+.field {
+  display: block;
+  width: 100%; height: var(--touch);
+  border-radius: var(--radius-pill);
+  background: var(--color-canvas);
+  border: 1px solid var(--color-input-border);
+  padding: 0 20px;
+  font-size: var(--t-body-size);
+}
+.field::placeholder { color: var(--color-muted); opacity: 1; }
+.field:focus { outline: 2px solid var(--color-primary-focus); outline-offset: 2px; }
+.field-guide { margin-top: var(--space-xs); }
+
+.search-results { margin-top: var(--space-md); }
+.no-result { margin-top: var(--space-md); }
+.no-result-title { font-weight: var(--t-strong-w); }
+.no-result .t-desc { margin-top: var(--space-xs); }
+
+/* ---------- 아래 버튼 ---------- */
+.bottom-bar {
+  position: fixed; bottom: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 100%; max-width: var(--max-width);
+  padding: var(--space-sm) var(--side) calc(var(--space-lg) + env(safe-area-inset-bottom, 0px));
+  background: var(--color-canvas);
+  display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: var(--space-sm);
+  z-index: 10;
+}
+.bottom-spacer { height: calc(var(--touch) + var(--space-sm) + var(--space-lg) + var(--space-lg)); }
+
+/* {component.button-primary}: 초록 알약(11/25). 누르면 scale(0.95) */
+.btn {
+  min-height: var(--touch);
+  min-width: 0;
+  /* 테두리 2px(보조 버튼과 같게, 11/25). 안쪽 여백은 테두리만큼 줄여 버튼 크기는 11 × 22 그대로 */
+  padding: calc(11px + 1px - var(--line-strong)) calc(22px + 1px - var(--line-strong));
+  border-radius: var(--radius-pill);
+  font-size: var(--t-body-size); line-height: 1.2; font-weight: var(--t-body-w);
+  display: flex; align-items: center; justify-content: center; text-align: center;
+  border: var(--line-strong) solid transparent;
+  transition: transform .1s ease;
+}
+.btn:active:not(:disabled) { transform: scale(0.95); }
+.btn-primary { background: var(--color-primary); color: var(--color-on-primary); }
+.btn-primary:disabled { background: var(--color-parchment); color: var(--color-muted); cursor: default; }
+/* 보조 버튼(11/25): 테두리 없는 회색 알약 — {colors.surface-chip-translucent} 바탕, {colors.ink-muted-80} 글자 */
+.btn-secondary { background: var(--color-chip); color: var(--color-ink-80); }
+
+/* ---------- 홈: 창문 그림 ---------- */
+.window { position: relative; }
+.window-art { display: block; width: 100%; height: auto; user-select: none; -webkit-user-drag: none; }
+.window .plant-art { position: absolute; height: auto; transform: translateX(-50%); pointer-events: none; user-select: none; -webkit-user-drag: none; }
+/* 화분 위 더하기: {component.button-icon-circular} 44 원. 원 아랫면이 화분 윗면보다 12 위 */
+.pot-plus {
+  position: absolute;
+  width: var(--touch); height: var(--touch);
+  transform: translate(-50%, calc(-100% - var(--space-sm)));
+  border-radius: 50%;
+  background: var(--color-chip);
+  display: grid; place-items: center;
+  transition: transform .1s ease;
+}
+.pot-plus:active { transform: translate(-50%, calc(-100% - var(--space-sm))) scale(0.95); }
+.home-label { margin-top: var(--space-md); text-align: center; }
+.home-label .status { justify-content: center; }
+
+/* ---------- 상태 표시: 점 + 글자 ---------- */
+.status { display: inline-flex; align-items: center; gap: 6px; margin-top: 4px; }
+.status .dot { width: var(--status-dot); height: var(--status-dot); border-radius: 50%; flex: none; }
+.status .dot.ok { background: var(--color-status-ok); }
+.status .dot.help { background: var(--color-status-help); }
+.status .t-desc { color: var(--color-ink); }
+
+/* ---------- 해결책 화면: 바탕 {colors.canvas-parchment} ---------- */
+body.bg-soft { background: var(--color-parchment); }
+body.bg-soft .bottom-bar { background: var(--color-parchment); }
+
+.top-bar { height: calc(var(--space-xxl) + var(--touch)); position: relative; }
+.top-bar .back {
+  position: absolute; left: -12px; bottom: 0;
+  width: var(--touch); height: var(--touch);
+  display: grid; place-items: center; color: var(--color-ink); /* 뒤로 가기는 검은색(11/26) */
+}
+
+/* 카드: {component.store-utility-card} (흰 바탕, 1px hairline, 모서리 18, 안쪽 24) */
+.card {
+  background: var(--color-canvas);
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+}
+
+/* 결과 화면 위쪽: 별명 → 종류 · 상태 한 줄 */
+.result-head { margin-top: var(--space-xs); }
+.result-meta { margin-top: 4px; }
+
+/* 화분 + 식물: 상자 없이 가운데. 식물 아랫면이 화분 테두리 윗면에 닿는다 */
+.result-plant { margin-top: var(--space-lg); display: flex; justify-content: center; }
+.pot-plant { display: flex; flex-direction: column; align-items: center; }
+.pot-plant .plant-art { display: block; height: auto; margin-bottom: calc(var(--overlap) * -1); position: relative; z-index: 1; user-select: none; -webkit-user-drag: none; }
+.pot-plant .pot { display: block; width: 100%; height: auto; }
+
+/* 지금 모습 말풍선: 흰 바탕, 1px hairline, 모서리 18, 위쪽 가운데 꼬리 */
+.bubble {
+  position: relative;
+  margin-top: var(--space-md);
+  padding: var(--space-md) 20px;
+  background: var(--color-canvas);
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-lg);
+  text-align: center;
+}
+/* 말풍선 안: 상태 표시(맨 위) → 지금 모습 문장, 사이 8 */
+.bubble .status { margin: 0 0 var(--space-xs); }
+.bubble::before {
+  content: ""; position: absolute; left: 50%; top: -7px;
+  width: 12px; height: 12px;
+  background: var(--color-canvas);
+  border-left: 1px solid var(--color-hairline); border-top: 1px solid var(--color-hairline);
+  transform: translateX(-50%) rotate(45deg);
+}
+
+.unsure { margin-top: var(--space-sm); text-align: center; }
+
+/* 지금 모습 · 이유 · 해야 할 일: 카드 하나씩, 사이 12 */
+.sections { margin-top: var(--space-lg); padding-bottom: var(--space-xxl); display: flex; flex-direction: column; gap: var(--space-sm); }
+.card-label {
+  margin: 0 0 var(--space-xs);
+  font-size: var(--t-caption-size); line-height: 1.29; font-weight: var(--t-strong-w); letter-spacing: var(--t-caption-ls);
+  color: var(--color-muted);
+}
+.sol-card.is-todo .card-label { color: var(--color-primary); }
+.sol-extra { margin-top: var(--space-md); padding-top: var(--space-md); border-top: 1px solid var(--color-hairline); }
+
+/* ---------- 막다른 화면 ---------- */
+.deadend-btn { margin-top: var(--space-xl); width: 100%; }
+
+/* 불러오기 실패 */
+.load-error { padding-top: var(--space-xxl); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; }
+}
