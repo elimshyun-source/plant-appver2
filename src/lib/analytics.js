@@ -27,9 +27,41 @@ export function stepView(step) {
 export function stepLeave(step, dir) {
   track(`step_${dir}_${step}`);
   if (shown && shown.step === step) {
-    const sec = (performance.now() - shown.at) / 1000;
-    const [, bucket] = TIME_BUCKETS.find(([max]) => sec < max);
-    track(`step_time_${step}_${bucket}`);
+    track(`step_time_${step}_${bucketSince(shown.at)}`);
   }
   shown = null;
+}
+
+function bucketSince(at) {
+  const sec = (performance.now() - at) / 1000;
+  return TIME_BUCKETS.find(([max]) => sec < max)[1];
+}
+
+/* ---------- 진단 횟수: 한 번 방문(탭을 닫기 전까지) 동안 몇 번째 진단인지 ---------- */
+const COUNT_KEY = 'plant-app.diagnoseCount';
+
+/** 진단을 시작할 때 부른다. diagnose_start와 몇 번째인지(1 / 2 / 3plus)를 남긴다. */
+export function trackDiagnoseStart() {
+  track('diagnose_start');
+  let n = 1;
+  try {
+    n = Number(sessionStorage.getItem(COUNT_KEY) || 0) + 1;
+    sessionStorage.setItem(COUNT_KEY, String(n));
+  } catch { /* 저장을 못 하면 첫 진단으로 센다 */ }
+  track(`diagnose_count_${n >= 3 ? '3plus' : n}`);
+}
+
+/* ---------- 결과 화면에 머문 시간 구간 ---------- */
+let resultShownAt = null;
+
+/** 결과 화면이 열릴 때 부른다. */
+export function resultView() {
+  resultShownAt = performance.now();
+}
+
+/** 결과 화면을 떠날 때(다른 화면으로 가거나 창을 닫을 때) 부른다. 결과 화면이 아니었으면 아무것도 안 한다. */
+export function resultLeave() {
+  if (resultShownAt == null) return;
+  track(`result_time_${bucketSince(resultShownAt)}`);
+  resultShownAt = null;
 }
