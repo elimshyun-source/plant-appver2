@@ -5,7 +5,7 @@ import { findSolution, todoFor } from '../content/solutions.js';
 import { getFlow, levelFor, questionPath, lightKeyOf } from '../flow.js';
 import { potWithPlant, statusBadge } from '../components/parts.js';
 import { esc, t } from '../lib/text.js';
-import { track, tag } from '../lib/analytics.js';
+import { track, tag, resultView } from '../lib/analytics.js';
 
 const POT_RIM_PX = 112; // 결과 화면 화분 테두리 너비 [제안]
 
@@ -36,6 +36,7 @@ export function renderResult(root, plantId) {
   tag('result_level', level);
   tag('result_solution', sol.id);
   track('result_view');
+  resultView();
   track('diagnose_done');
 
   const { todo, extra } = todoFor(sol, plant.kind);
