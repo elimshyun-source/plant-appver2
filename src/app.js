@@ -10,7 +10,7 @@ import { loadSymptoms } from './content/symptoms.js';
 import { loadSolutions } from './content/solutions.js';
 import { startFlow } from './flow.js';
 import { tPlain } from './lib/text.js';
-import { track } from './lib/analytics.js';
+import { track, trackDiagnoseStart, resultLeave } from './lib/analytics.js';
 
 const root = document.getElementById('app');
 let previous = null;
@@ -20,6 +20,7 @@ function route() {
   const parts = hash.replace(/^#\/?/, '').split('/').filter(Boolean);
   const [page, arg] = parts;
 
+  resultLeave(); // 결과 화면을 떠나면 머문 시간 구간을 남긴다(결과 화면이 아니었으면 아무것도 안 함)
   window.scrollTo(0, 0);
   document.body.classList.remove('bg-soft'); // 해결책 화면만 연한 배경
 
@@ -34,7 +35,7 @@ function route() {
     const [, , sub, n] = parts;
     if (!sub) {
       // 홈에서 식물을 누르면 증상을 새로 고른다(requirements.md 1. 홈).
-      if (previous === '') { startFlow(arg); track('diagnose_start'); }
+      if (previous === '') { startFlow(arg); trackDiagnoseStart(); }
       renderSymptoms(root, arg);
     } else if (sub === 'q') {
       renderQuestion(root, arg, Number(n) || 0);
@@ -64,6 +65,7 @@ async function start() {
   }
   document.title = tPlain('home.title');
   window.addEventListener('hashchange', route);
+  window.addEventListener('pagehide', resultLeave); // 결과 화면에서 창을 닫을 때
   route();
 }
 
