@@ -11,11 +11,14 @@ const listItems = (text) => text.split('\n').filter((l) => /^\s*-\s+/.test(l)).m
 function readQuestion(text) {
   const title = unbold((text.match(/^질문:\s*(.+?)(\s*\(|$)/m) || [])[1] || '');
   const guide = ((text.match(/^안내 문구:\s*(.+)$/m) || [])[1] || '').trim();
+  // "확인 그림: 파일 경로" (그림 파일일 때만 쓴다. "(받으면 넣는다)"면 그림 없음)
+  const imageLine = ((text.match(/^확인 그림:\s*(.+)$/m) || [])[1] || '').trim();
+  const helpImage = /\.(png|webp|jpe?g|svg)$/i.test(imageLine) ? imageLine : null;
   const answers = listItems(text).map((item) => {
     const [label, ...rest] = item.split(/:\s*/);
     return { label: label.trim(), desc: rest.join(': ').trim() };
   });
-  return { title, guide, answers };
+  return { title, guide, answers, helpImage };
 }
 
 export async function loadSymptoms() {

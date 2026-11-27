@@ -26,8 +26,10 @@ function read() {
 function write(state) {
   try {
     localStorage.setItem(KEY, JSON.stringify(state));
+    return true;
   } catch {
     // 저장하지 못해도 화면은 계속 쓸 수 있게 둔다.
+    return false;
   }
 }
 
@@ -110,4 +112,51 @@ export function setLight(id, light) {
   if (!plant) return;
   plant.light = light;
   write(state);
+}
+
+/* ---------- 진단 기록 (requirements.md 7. 진단 기록, 11/27) ---------- */
+function todayKey() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
+/**
+ * 결과 화면에 온 진단을 남긴다. 같은 날 같은 해결책이면 새로 쌓지 않고
+ * 그날 기록의 시각·상태·햇빛 정도만 새로 고치고 맨 위로 올린다(메모는 그대로).
+ */
+export function addHistory(plantId, { level, solutionId, symptom, light }) {
+  const plant = findPlant(plantId);
+  if (!plant) return null;
+  if (!Array.isArray(plant.history)) plant.history = [];
+  const date = todayKey();
+  const at = new Date().toISOString();
+  const i = plant.history.findIndex((r) => r.date === date && r.solutionId === solutionId);
+  let record;
+  if (i >= 0) {
+    [record] = plant.history.splice(i, 1);
+    Object.assign(record, { at, level, symptom, light });
+  } else {
+    record = { id: `r${Date.now().toString(36)}${Math.random().toString(36).slice(2, 5)}`, date, at, level, solutionId, symptom, light, memo: '' };
+  }
+  plant.history.unshift(record);
+  write(state);
+  return record;
+}
+
+/** 기록 목록(최근 것이 위) */
+export function getHistory(plantId) {
+  const plant = findPlant(plantId);
+  return plant && Array.isArray(plant.history) ? plant.history : [];
+}
+
+export function findRecord(plantId, recordId) {
+  return getHistory(plantId).find((r) => r.id === recordId) || null;
+}
+
+/** 메모를 저장한다. 저장에 성공하면 true */
+export function setMemo(plantId, recordId, memo) {
+  const record = findRecord(plantId, recordId);
+  if (!record) return false;
+  record.memo = memo;
+  return write(state);
 }

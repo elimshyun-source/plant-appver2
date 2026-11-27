@@ -6,6 +6,7 @@ import { renderRegister, resetRegisterDraft } from './screens/register.js';
 import { renderSymptoms } from './screens/symptoms.js';
 import { renderQuestion } from './screens/question.js';
 import { renderResult, renderDeadend } from './screens/result.js';
+import { renderHistory, renderRecord } from './screens/history.js';
 import { loadSymptoms } from './content/symptoms.js';
 import { loadSolutions } from './content/solutions.js';
 import { startFlow } from './flow.js';
@@ -26,6 +27,7 @@ function route() {
 
   if (!page) renderHome(root);
   else if (page === 'delete') renderDelete(root, arg);
+  else if (page === 'history') { if (arg) renderRecord(root, arg); else renderHistory(root); }
   else if (page === 'register') {
     const step = Number(arg) || 1;
     // 홈에서 더하기를 눌러 새로 시작할 때만 지난 입력을 비운다.

@@ -16,7 +16,7 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
-button, input { font: inherit; color: inherit; letter-spacing: inherit; }
+button, input, textarea { font: inherit; color: inherit; letter-spacing: inherit; }
 a { color: inherit; text-decoration: none; }
 button { cursor: pointer; }
 p { margin: 0; }
@@ -197,6 +197,24 @@ body.bg-soft .bottom-bar { background: var(--color-parchment); }
 
 .unsure { margin-top: var(--space-sm); text-align: center; }
 
+/* ---------- 질문 진행 막대 (11/27) [제안]: 칸마다 높이 4 알약, 사이 4. 지나온·지금 칸은 초록 ---------- */
+.q-progress { display: flex; gap: 4px; padding-top: var(--space-lg); }
+.q-progress-seg { flex: 1; height: 4px; border-radius: var(--radius-pill); background: var(--color-hairline); transition: background-color .2s ease; }
+.q-progress-seg.is-done { background: var(--color-primary); }
+.q-progress + .screen-head { padding-top: var(--space-lg); }
+
+/* ---------- 확인 방법 툴팁 (11/27): 결과 화면 말풍선과 같은 모양, 꼬리는 오른쪽 ⓘ 쪽 ---------- */
+.help-btn { color: var(--color-ink); background: none; border: 0; padding: 0; align-self: flex-start; }
+.help-btn[aria-expanded="true"] { color: var(--color-primary); }
+.help-bubble { margin-top: var(--space-xs); text-align: left; }
+.help-bubble[hidden] { display: none; }
+/* ⓘ 그림 가운데(오른쪽 끝에서 12px)를 가리킨다 */
+.help-bubble::before { left: auto; right: 6px; transform: rotate(45deg); }
+.help-art { display: block; width: 100%; height: auto; aspect-ratio: 1 / 1; object-fit: cover; border-radius: 8px; margin-bottom: var(--space-md); } /* 카드 안 이미지: {rounded.sm} 8px (design-system.md Photography Geometry) */
+.help-guide { margin-bottom: var(--space-md); } /* 안내 문구: 사진 아래, 설명 위 */
+.help-list { margin: 0; display: flex; flex-direction: column; gap: var(--space-sm); }
+.help-list dd { margin: 0; }
+
 /* 지금 모습 · 이유 · 해야 할 일: 카드 하나씩, 사이 12 */
 .sections { margin-top: var(--space-lg); padding-bottom: var(--space-xxl); display: flex; flex-direction: column; gap: var(--space-sm); }
 .card-label {
@@ -206,6 +224,49 @@ body.bg-soft .bottom-bar { background: var(--color-parchment); }
 }
 .sol-card.is-todo .card-label { color: var(--color-primary); }
 .sol-extra { margin-top: var(--space-md); padding-top: var(--space-md); border-top: 1px solid var(--color-hairline); }
+
+/* ---------- 홈: 책 → 진단 기록 (11/27) ---------- */
+.book-hit { position: absolute; }
+/* 화분 위 더하기와 같은 회색 바탕 알약. 아랫면이 책 윗면보다 12 위 */
+.book-pill {
+  position: absolute;
+  min-height: var(--touch);
+  padding: 0 var(--space-md);
+  transform: translate(-50%, calc(-100% - var(--space-sm)));
+  border-radius: var(--radius-pill);
+  background: var(--color-chip);
+  color: var(--color-ink-80);
+  font-size: var(--t-caption-size); font-weight: var(--t-strong-w); letter-spacing: var(--t-caption-ls);
+  display: flex; align-items: center; justify-content: center;
+  white-space: nowrap;
+  transition: transform .1s ease;
+}
+.book-pill:active { transform: translate(-50%, calc(-100% - var(--space-sm))) scale(0.95); }
+
+/* ---------- 진단 기록 (11/27) ---------- */
+.history-head { margin-top: var(--space-xs); }
+.history-meta { margin-top: var(--space-xs); display: flex; align-items: center; gap: var(--space-xs); flex-wrap: wrap; }
+.history-meta .status { margin-top: 0; }
+.history-list { list-style: none; margin: var(--space-lg) 0 0; padding: 0 0 var(--space-xxl); display: flex; flex-direction: column; gap: var(--space-sm); }
+.history-card { display: block; transition: transform .1s ease; }
+.history-card:active { transform: scale(0.98); }
+.history-symptom { margin-top: var(--space-xs); }
+.history-memo { margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.history-empty { margin-top: var(--space-lg); }
+.history-missing { margin-top: var(--space-lg); }
+.history-sections { padding-bottom: 0; }
+.memo-card { margin: var(--space-sm) 0 var(--space-xxl); }
+/* 메모 글 칸 [제안]: 입력 칸과 같은 바탕·테두리, 여러 줄이라 모서리 18 */
+.memo-field {
+  height: auto; min-height: 120px;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-lg);
+  line-height: var(--t-body-lh);
+  resize: vertical;
+}
+.memo-field:focus { outline-offset: 0; }
+.memo-actions { margin-top: var(--space-sm); display: flex; align-items: center; justify-content: flex-end; gap: var(--space-sm); } /* 저장 버튼은 오른쪽 끝(11/27) */
+.memo-actions .btn { flex: none; }
 
 /* ---------- 막다른 화면 ---------- */
 .deadend-btn { margin-top: var(--space-xl); width: 100%; }

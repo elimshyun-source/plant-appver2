@@ -1,6 +1,6 @@
 // 5. 해결책: 별명 · 종류 · 상태 → 화분 + 식물 → 지금 모습 말풍선 → 이유 · 해야 할 일 카드 (requirements.md "화면 짜임")
 // 6. 막다른 화면: 해결책이 없거나 "여기에 없어요"를 골랐을 때
-import { findPlant, setResult, setLight } from '../store.js';
+import { findPlant, setResult, setLight, addHistory } from '../store.js';
 import { findSolution, todoFor } from '../content/solutions.js';
 import { getFlow, levelFor, questionPath, lightKeyOf } from '../flow.js';
 import { potWithPlant, statusBadge } from '../components/parts.js';
@@ -33,6 +33,7 @@ export function renderResult(root, plantId) {
   const level = levelFor(f);
   setResult(plantId, level, sol.id);
   setLight(plantId, lightKeyOf(f.answers.light));
+  addHistory(plantId, { level, solutionId: sol.id, symptom: f.symptom, light: lightKeyOf(f.answers.light) }); // 진단 기록(11/27)
   tag('result_level', level);
   tag('result_solution', sol.id);
   track('result_view');
@@ -71,7 +72,7 @@ export function renderResult(root, plantId) {
 }
 
 /** 구역 카드: 작은 굵은 제목 + 본문. 해야 할 일은 제목을 초록으로, 식물별 안내는 가는 선 아래에 */
-function section(title, body, { extra = '', todo = false } = {}) {
+export function section(title, body, { extra = '', todo = false } = {}) {
   return `<section class="card sol-card${todo ? ' is-todo' : ''}">
     <h2 class="card-label">${title}</h2>
     <p class="t-body">${body}</p>

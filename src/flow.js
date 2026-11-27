@@ -75,11 +75,39 @@ export function questionPath(f, plant) {
   return path;
 }
 
+/**
+ * 진행 막대용(11/27): 지금까지의 답으로 나올 수 있는 최대 질문 목록.
+ * questionPath와 같은 규칙이지만, 아직 답하지 않아 정해지지 않은 질문은 "나올 수 있다"로 센다.
+ * 답 때문에 빠지는 질문이 생기면 줄어든다.
+ */
+export function maxQuestionPath(f, plant) {
+  const symptom = findSymptom(f.symptom);
+  if (!symptom) return [];
+  const { changeRule } = getSymptoms();
+  const a = f.answers;
+  const path = [];
+  if (ownQuestion(symptom)) path.push('own');
+  let soilAsked = false;
+  if (asksSoil(symptom)) {
+    const onlyWhen = soilOnlyWhen(symptom);
+    if (!onlyWhen || a.own == null || a.own === onlyWhen) { path.push('soil'); soilAsked = true; }
+  }
+  path.push('light');
+  if (asksChange(symptom) && symptom.name === changeRule.symptom && plant.kind !== changeRule.skipPlant) {
+    const possible = soilAsked
+      && (a.own == null || a.own === changeRule.count)
+      && (a.soil == null || a.soil === changeRule.soil)
+      && (a.light == null || changeRule.lights.includes(a.light));
+    if (possible) path.push('change');
+  }
+  return path;
+}
+
 /** 질문 id → { title, guide, answers, emphasisKey } */
 export function questionFor(id, f) {
   const sym = getSymptoms();
   if (id === 'own') return { ...ownQuestion(findSymptom(f.symptom)), emphasisKey: 'question.emphasis.count' };
-  if (id === 'soil') return { ...sym.soil, emphasisKey: 'question.emphasis.soil' };
+  if (id === 'soil') return { ...sym.soil, emphasisKey: 'question.emphasis.soil', help: 'soil' }; // 확인 방법 툴팁(11/27)
   if (id === 'light') {
     return { title: getContent().ui['question.light.title'], answers: LIGHTS.map((k) => ({ label: lightLabel(k) })) };
   }

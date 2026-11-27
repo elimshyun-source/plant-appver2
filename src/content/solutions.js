@@ -106,3 +106,8 @@ export function todoFor(sol, kind) {
   }
   return { todo, extra };
 }
+
+/** 해결책 번호로 찾는다(진단 기록에서 다시 보여줄 때). 없으면 null */
+export function solutionById(id) {
+  return (list || []).find((s) => s.id === id) || null;
+}
